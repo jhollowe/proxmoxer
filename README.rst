@@ -38,6 +38,12 @@ To use the 'ssh_paramiko' backend, install paramiko
 
     pip install paramiko
 
+To use the 'openssh' backend, install openssh_wrapper
+
+.. code-block:: bash
+
+    pip install openssh_wrapper
+
 
 Short usage information
 -----------------------
@@ -52,7 +58,7 @@ The first thing to do is import the proxmoxer library and create ProxmoxAPI inst
 
 This will connect by default to PVE through the 'https' backend.
 
-To define service to PVE or PMG, include service option into script:
+To select a different service, use the `service` argument (currently supports PVE and PMG):
 
 **Define PVE connection:**
 
@@ -87,8 +93,7 @@ For SSH access, it is possible to use pre-prepared public/private key authentica
     from proxmoxer import ProxmoxAPI
     proxmox = ProxmoxAPI('proxmox_host', user='proxmox_admin', backend='ssh_paramiko')
 
-**Note: the 'https' backend needs the 'requests' library, the 'ssh_paramiko' backend needs the 'paramiko' library,
-and the 'openssh' backend needs the 'openssh_wrapper' library installed.**
+**Note: ensure you have the required libraries (listed above) for the access method you are using**
 
 Queries are exposed via the access methods **get**, **post**, **put** and **delete**. For convenience two
 synonyms are available: **create** for **post**, and **set** for **put**.
@@ -131,18 +136,21 @@ As a demonstration of the flexibility of usage of this library, the following li
 Some more examples:
 
 Listing VMs:
+
 .. code-block:: python
 
     for vm in proxmox.cluster.resources.get(type='vm'):
         print("{0}. {1} => {2}" .format(vm['vmid'], vm['name'], vm['status']))
 
 Listing contents of the ``local`` storage on the ``proxmox_node`` node (method 1):
+
 .. code-block:: python
 
     node = proxmox.nodes('proxmox_node')
     pprint(node.storage('local').content.get())
 
 Listing contents of the ``local`` storage on the ``proxmox_node`` node (method 2):
+
 .. code-block:: python
 
     node = proxmox.nodes.proxmox_node()
