@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Proxmox Forums
+    about: For discussion and questions about the Proxmox services
+    url: https://forum.proxmox.com/
