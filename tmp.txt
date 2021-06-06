@@ -1,0 +1,2 @@
+https://www.python.org/dev/peps/pep-0484/#stub-files
+https://black.readthedocs.io/en/stable/guides/introducing_black_to_your_project.html#avoiding-ruining-git-blame
