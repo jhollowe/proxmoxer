@@ -94,6 +94,7 @@ class ProxmoxResource(ProxmoxResourceBase):
     def _request(self, method, data=None, params=None):
         url = self._store["base_url"]
         if data:
+            data = {k.replace("_", "-"): data[k] for k in data}
             logger.info('%s %s %r', method, url, data)
         else:
             logger.info('%s %s', method, url)
