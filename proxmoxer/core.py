@@ -48,7 +48,7 @@ class ProxmoxResourceBase(object):
             raise AttributeError(item)
 
         kwargs = self._store.copy()
-        kwargs['base_url'] = self.url_join(self._store["base_url"], item)
+        kwargs['base_url'] = self.url_join(self._store["base_url"], item.replace("_", "-"))
 
         return ProxmoxResource(**kwargs)
 
