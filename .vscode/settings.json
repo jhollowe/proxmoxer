@@ -6,6 +6,9 @@
     "onboot",
     "Paramiko",
     "proxmoxer",
+    "rtype",
+    "upid",
     "vmid"
   ],
+  "autoDocstring.docstringFormat": "sphinx",
 }

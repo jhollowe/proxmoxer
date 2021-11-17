@@ -1,0 +1,3 @@
+__author__ = 'John Hollowell'
+__copyright__ = '(c) John Hollowell 2021'
+__licence__ = 'MIT'
