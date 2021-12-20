@@ -6,7 +6,8 @@
     {
       "label": "Tests",
       "type": "shell",
-      "command": "nosetests --with-coverage --cover-xml --cover-erase --cover-branches --cover-package=proxmoxer -w tests"
+      "command": "nosetests --with-coverage --cover-xml --cover-erase --cover-branches --cover-package=proxmoxer -w tests",
+      "problemMatcher": []
     }
   ]
 }

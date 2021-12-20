@@ -11,4 +11,5 @@
     "vmid"
   ],
   "autoDocstring.docstringFormat": "sphinx",
+  "coverage-gutters.xmlname": "tests/coverage.xml",
 }
