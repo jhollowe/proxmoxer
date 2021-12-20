@@ -66,7 +66,7 @@ class Tasks:
         data["starttime"] = int(segments[4], 16)
         data["type"] = segments[5]
         data["id"] = segments[6]
-        data["user"] = segments[7]
+        data["user"] = segments[7].split("!")[0]
         return data
 
     @staticmethod
@@ -78,8 +78,8 @@ class Tasks:
         :return: a multiline string of the log
         :rtype: str
         """
-        str_list = [] * len(log_list)
+        str_list = [""] * len(log_list)
         for line in log_list:
-            str_list[line.n] = line.t
+            str_list[line["n"] -1] = line.get("t")
 
         return "\n".join(str_list)
