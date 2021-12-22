@@ -172,3 +172,17 @@ class TestSuite():
         eq_(data['memory'], 512)
         eq_(data['ip_address'], '10.0.100.200')
         eq_(data['onboot'], False)
+
+    def test_hyphen_replacement(self):
+        node = self.proxmox.nodes('proxmox')
+        storage = node.storage('local')
+
+        # PVE 7.1-2 download
+        storage.download_url(content='iso', url='https://www.proxmox.com/en/downloads?task=callelement&format=raw&item_id=638&element=f85c494b-2b32-4109-b8c1-083cca2b7db6&method=download&args[0]=142b8d6088b033169f802f34ff8bcc97', checksum='f469d2e419328c4b8715544c84f629161cc07024ce26ad63f00bc1b07de265df', checksum_algorithm='sha256')
+        eq_(self.session.request.call_args[0],
+            ('PUT', 'https://proxmox:123/api2/json/nodes/proxmox/storage/local/download-url'))
+        data = self.session.request.call_args[1]['data']
+        eq_(data['url'], 'https://www.proxmox.com/en/downloads?task=callelement&format=raw&item_id=638&element=f85c494b-2b32-4109-b8c1-083cca2b7db6&method=download&args[0]=142b8d6088b033169f802f34ff8bcc97')
+        eq_(data['content'], 'iso')
+        eq_(data['checksum'], 'f469d2e419328c4b8715544c84f629161cc07024ce26ad63f00bc1b07de265df')
+        eq_(data['checksum-algorithm'], 'sha256')
