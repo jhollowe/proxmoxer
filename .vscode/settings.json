@@ -1,14 +1,30 @@
 {
+  "python.linting.enabled": true,
+  "python.formatting.provider": "black",
+  "python.linting.flake8Enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.banditEnabled": true,
+  "python.linting.banditArgs": [
+    "--baseline tests/known_issues.json"
+  ],
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
   "cSpell.words": [
+    "auths",
     "Butovich",
     "cpus",
     "Oleg",
     "onboot",
+    "ostemplate",
     "Paramiko",
     "proxmoxer",
     "rtype",
     "upid",
-    "vmid"
+    "vmid",
+    "vztmpl"
   ],
   "autoDocstring.docstringFormat": "sphinx",
   "coverage-gutters.xmlname": "tests/coverage.xml",
