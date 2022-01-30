@@ -5,9 +5,14 @@ from proxmoxer import ProxmoxAPI
 
 if sys.version_info[0] >= 3:
     # prefer using monoatomic time if available
-    def get_time(): return time.monotonic()
+    def get_time():
+        return time.monotonic()
+
+
 else:
-    def get_time(): return time.time()
+
+    def get_time():
+        return time.time()
 
 
 class Tasks:
@@ -80,6 +85,6 @@ class Tasks:
         """
         str_list = [""] * len(log_list)
         for line in log_list:
-            str_list[line["n"] -1] = line.get("t")
+            str_list[line["n"] - 1] = line.get("t")
 
         return "\n".join(str_list)
