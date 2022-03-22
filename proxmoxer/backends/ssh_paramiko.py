@@ -22,11 +22,14 @@ except ImportError:
 
 
 class SshParamikoSession(CommandBaseSession):
-    def __init__(self, host, user, password=None, private_key_file=None, port=22, **kwargs):
+    def __init__(
+        self, host, user, password=None, private_key_file=None, passphrase=None, port=22, **kwargs
+    ):
         super(SshParamikoSession, self).__init__(**kwargs)
         self.host = host
         self.user = user
         self.password = password
+        self.passphrase = passphrase
         self.private_key_file = private_key_file
         self.port = port
 
@@ -43,13 +46,14 @@ class SshParamikoSession(CommandBaseSession):
 
         ssh_client.connect(
             self.host,
-            username=self.user,
-            allow_agent=(not self.password),
-            look_for_keys=True,
-            key_filename=key_filename,
-            password=self.password,
-            timeout=self.timeout,
             port=self.port,
+            username=self.user,
+            password=self.password,
+            passphrase=self.passphrase,
+            key_filename=key_filename,
+            timeout=self.timeout,
+            look_for_keys=(not key_filename),
+            allow_agent=(not self.password),
         )
 
         return ssh_client

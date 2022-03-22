@@ -27,6 +27,7 @@ def test_paramiko_connection(_):
             "timeout": 5,
             "password": None,
             "port": 123,
+            "passphrase": None,
         },
     )
 
