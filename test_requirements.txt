@@ -9,3 +9,9 @@ coveralls
 pytest
 pytest-cov
 responses
+
+# type checking
+mypy
+typing-extensions
+types-requests
+types-paramiko

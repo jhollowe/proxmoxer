@@ -214,7 +214,6 @@ class TestCommandBaseBackend:
         assert isinstance(self.backend.get_serializer(), command_base.JsonSimpleSerializer)
 
 
-@classmethod
 def _exec_echo(_, cmd):
     # if getting a tmpfile on the remote, return fake tmpfile
     if cmd == [
@@ -226,13 +225,11 @@ def _exec_echo(_, cmd):
     return cmd, None
 
 
-@classmethod
 def _exec_err(_, cmd):
     print("\n".join(cmd))
     return None, "\n".join(cmd)
 
 
-@classmethod
 def upload_file_obj_echo(_, file_obj, remote_path):
     return file_obj, remote_path
 

@@ -9,6 +9,7 @@ import platform
 import re
 from itertools import chain
 from shlex import split as shell_split
+from typing import Any
 
 from proxmoxer.core import SERVICES
 
@@ -17,7 +18,7 @@ logger.setLevel(level=logging.WARNING)
 
 
 try:
-    from shlex import join
+    from shlex import join  # type: ignore
 
     def shell_join(args):
         return join(args)
@@ -74,7 +75,7 @@ class CommandBaseSession(object):
         tmp_filename = ""
         if url.endswith("upload"):
             # copy file to temporary location on proxmox host
-            tmp_filename, tmp_err = self._exec(
+            tmp_filename, _ = self._exec(
                 [
                     "python3",
                     "-c",
@@ -145,6 +146,8 @@ class JsonSimpleSerializer(object):
 
 
 class CommandBaseBackend(object):
+    session: Any
+
     def get_session(self):
         return self.session
 

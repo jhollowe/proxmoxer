@@ -7,20 +7,8 @@ __license__ = "MIT"
 import importlib
 import logging
 import posixpath
-
-# Python 3 compatibility:
-try:
-    import httplib
-except ImportError:  # py3
-    from http import client as httplib
-try:
-    import urlparse
-except ImportError:  # py3
-    from urllib import parse as urlparse
-try:
-    basestring
-except NameError:  # py3
-    basestring = (bytes, str)
+from http import client as httplib
+from urllib import parse as urlparse
 
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.WARNING)
@@ -93,10 +81,10 @@ class ProxmoxResource(object):
         return urlparse.urlunsplit([scheme, netloc, path, query, fragment])
 
     def __call__(self, resource_id=None):
-        if resource_id in (None, ''):
+        if resource_id in (None, ""):
             return self
 
-        if isinstance(resource_id, basestring):
+        if isinstance(resource_id, (bytes, str)):
             resource_id = resource_id.split("/")
         elif not isinstance(resource_id, (tuple, list)):
             resource_id = [str(resource_id)]
