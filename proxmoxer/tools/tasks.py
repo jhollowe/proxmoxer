@@ -1,4 +1,38 @@
+import sys
 import time
+from typing import List, Union
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict
+else:
+    from typing_extensions import TypedDict
+
+from proxmoxer.core import ProxmoxAPI
+
+
+class UpidData(TypedDict):
+    """
+    Type of a decoded UPID
+    """
+
+    upid: str
+    node: str
+    pid: int
+    pstart: int
+    starttime: int
+    type: str
+    id: str
+    user: str
+    comment: str
+
+
+class LogLine(TypedDict):
+    """
+    The format of a line of a log returned by prox.nodes.{node}.tasks.{upid}.log.get()
+    """
+
+    n: int
+    t: str
 
 
 class Tasks:
@@ -8,7 +42,9 @@ class Tasks:
     """
 
     @staticmethod
-    def blocking_status(prox, task_id, timeout=300, polling_interval=0.01):
+    def blocking_status(
+        prox: ProxmoxAPI, task_id: str, timeout: int = 300, polling_interval: float = 0.01
+    ) -> Union[dict, None]:
         """
         Turns getting the status of a Proxmox task into a blocking call
         by polling the API until the task completes
@@ -37,7 +73,7 @@ class Tasks:
         return data
 
     @staticmethod
-    def decode_upid(upid):
+    def decode_upid(upid: str) -> UpidData:
         """
         Decodes the sections of a UPID into separate fields
 
@@ -46,11 +82,11 @@ class Tasks:
         :return: The decoded information from the UPID
         :rtype: dict
         """
-        segments = upid.split(":")
+        segments: List[str] = upid.split(":")
         if segments[0] != "UPID" or len(segments) != 9:
             raise AssertionError("UPID is not in the correct format")
 
-        data = {
+        data: UpidData = {
             "upid": upid,
             "node": segments[1],
             "pid": int(segments[2], 16),
@@ -64,7 +100,7 @@ class Tasks:
         return data
 
     @staticmethod
-    def decode_log(log_list):
+    def decode_log(log_list: List[LogLine]) -> str:
         """
         Takes in a task's log data and returns a multiline string representation
 
