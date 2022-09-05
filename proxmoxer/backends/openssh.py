@@ -2,6 +2,8 @@ __author__ = "Oleg Butovich"
 __copyright__ = "(c) Oleg Butovich 2013-2017"
 __license__ = "MIT"
 
+# spell-checker:ignore configfile
+
 import logging
 
 from proxmoxer.backends.command_base import (

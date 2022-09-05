@@ -9,6 +9,7 @@ from proxmoxer import backends
 from proxmoxer.backends.command_base import JsonSimpleSerializer, Response
 
 # pylint: disable=no-self-use,protected-access
+# spell-checker:ignore stringable
 
 MODULE_LOGGER_NAME = "proxmoxer.core"
 
@@ -85,7 +86,7 @@ class TestProxmoxResource:
         assert isinstance(ret, core.ProxmoxResource)
         assert ret._store["base_url"] == self.base_url + "nodes"
 
-    def test_call_emptystr(self):
+    def test_call_empty_str(self):
         test_obj = core.ProxmoxResource(base_url=self.base_url)
         ret = test_obj("")
 

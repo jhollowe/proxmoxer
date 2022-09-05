@@ -7,6 +7,7 @@ import pytest
 import proxmoxer.backends.ssh_paramiko as ssh_paramiko
 
 # pylint: disable=no-self-use
+# spell-checker:ignore putfo
 
 
 class TestParamikoBackend:

@@ -11,6 +11,7 @@ from requests import Request, Response
 import proxmoxer.backends.https as https
 
 # pylint: disable=no-self-use
+# spell-checker:ignore PVEAPI PBSAPI
 
 MODULE_LOGGER_NAME = "proxmoxer.backends.https"
 
@@ -491,7 +492,7 @@ def shrink_thresholds():
 
 @pytest.fixture
 def apply_none_service():
-    serv = {
+    services = {
         "NONE": {
             "supported_backends": [],
             "supported_https_auths": [],
@@ -499,7 +500,7 @@ def apply_none_service():
         }
     }
 
-    with mock.patch("proxmoxer.core.SERVICES", serv), mock.patch(
-        "proxmoxer.backends.https.SERVICES", serv
+    with mock.patch("proxmoxer.core.SERVICES", services), mock.patch(
+        "proxmoxer.backends.https.SERVICES", services
     ):
         yield

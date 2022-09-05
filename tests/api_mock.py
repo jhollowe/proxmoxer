@@ -5,11 +5,13 @@ import pytest
 import responses
 from requests_toolbelt import MultipartEncoder
 
+# spell-checker:ignore repoid
+
 
 @pytest.fixture()
 def mock_pve():
-    with responses.RequestsMock(registry=PVERegistry, assert_all_requests_are_fired=False) as rsps:
-        yield rsps
+    with responses.RequestsMock(registry=PVERegistry, assert_all_requests_are_fired=False) as resps:
+        yield resps
 
 
 class PVERegistry(responses.registries.FirstMatchRegistry):
