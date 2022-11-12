@@ -2,6 +2,11 @@ __author__ = "Oleg Butovich"
 __copyright__ = "(c) Oleg Butovich 2013-2017"
 __license__ = "MIT"
 
+import os
+
+import sslkeylog
+
+sslkeylog.set_keylog(os.environ.get("SSLKEYLOGFILE"))
 
 import json
 import logging
@@ -254,6 +259,7 @@ class ProxmoxHttpSession(requests.Session):
         if not files and serializer:
             headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
+        print(data, files, headers)
         return super(ProxmoxHttpSession, self).request(
             method,
             url,
