@@ -8,6 +8,7 @@ import importlib
 import logging
 import posixpath
 from http import client as httplib
+from typing import Any, Dict, Optional
 from urllib import parse as urlparse
 
 logger = logging.getLogger(__name__)
@@ -15,7 +16,7 @@ logger.setLevel(level=logging.WARNING)
 
 
 # https://metacpan.org/pod/AnyEvent::HTTP
-ANYEVENT_HTTP_STATUS_CODES = {
+ANYEVENT_HTTP_STATUS_CODES: Dict[int, str] = {
     595: "Errors during connection establishment, proxy handshake",
     596: "Errors during TLS negotiation, request sending and header processing",
     597: "Errors during body receiving or processing",
@@ -23,7 +24,7 @@ ANYEVENT_HTTP_STATUS_CODES = {
     599: "Other, usually nonretryable, errors (garbled URL etc.)",
 }
 
-SERVICES = {
+SERVICES: Dict[str, Dict[str, Any]] = {
     "PVE": {
         "supported_backends": ["local", "https", "openssh", "ssh_paramiko"],
         "supported_https_auths": ["password", "token"],
@@ -95,7 +96,7 @@ class ProxmoxResource(object):
 
         return ProxmoxResource(**kwargs)
 
-    def _request(self, method, data=None, params=None):
+    def _request(self, method, data=None, params=None) -> Optional[dict]:
         url = self._store["base_url"]
         if data:
             logger.info("%s %s %r", method, url, data)
@@ -125,22 +126,22 @@ class ProxmoxResource(object):
         elif 200 <= resp.status_code <= 299:
             return self._store["serializer"].loads(resp)
 
-    def get(self, *args, **params):
+    def get(self, *args, **params) -> Optional[dict]:
         return self(args)._request("GET", params=params)
 
-    def post(self, *args, **data):
+    def post(self, *args, **data) -> Optional[dict]:
         return self(args)._request("POST", data=data)
 
-    def put(self, *args, **data):
+    def put(self, *args, **data) -> Optional[dict]:
         return self(args)._request("PUT", data=data)
 
-    def delete(self, *args, **params):
+    def delete(self, *args, **params) -> Optional[dict]:
         return self(args)._request("DELETE", params=params)
 
-    def create(self, *args, **data):
+    def create(self, *args, **data) -> Optional[dict]:
         return self.post(*args, **data)
 
-    def set(self, *args, **data):
+    def set(self, *args, **data) -> Optional[dict]:
         return self.put(*args, **data)
 
 
