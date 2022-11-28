@@ -1,3 +1,11 @@
+[build-system]
+
 [tool.black]
 line-length = 100
 target-version = ['py37']
+
+[project]
+name = "proxmoxer"
+version = "2.0.0"
+description = "Python Wrapper for the Proxmox 2.x API (HTTP and SSH)"
+readme = "README.rst"
