@@ -53,7 +53,7 @@ jobs:
         uses: pre-commit/action@v3.0.0
 
       - name: Upload coverage data to coveralls.io
-        if: github.repository == 'proxmoxer/proxmoxer'
+        if: github.repository == 'proxmoxer/proxmoxer' && !env.ACT
         run: coveralls --service=github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,7 +63,7 @@ jobs:
 
   complete:
     name: Finalize Coveralls Report
-    if: github.repository == 'proxmoxer/proxmoxer'
+    if: github.repository == 'proxmoxer/proxmoxer' && !github.event.act
     needs: unit-test
     runs-on: ubuntu-latest
     steps:

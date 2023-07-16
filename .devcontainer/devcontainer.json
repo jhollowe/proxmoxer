@@ -10,6 +10,24 @@
       "VARIANT": "3.7"
     }
   },
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/act:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "latest",
+      "moby": true,
+      "dockerDashComposeVersion": "v2",
+      "installDockerBuildx": true
+    }
+    // TODO does not work with ACT due to DID creating a too-small tmpfs for /tmp
+    // "ghcr.io/devcontainers/features/docker-in-docker:2": {
+    //   "version": "latest",
+    //   "moby": true,
+    //   "dockerDashComposeVersion": "v2",
+    //   "installDockerBuildx": true
+    // }
+  },
   // Set *default* container specific settings.json values on container create.
   "customizations": {
     "vscode": {
