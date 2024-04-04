@@ -1,19 +1,19 @@
 repos:
   ###### FORMATTING ######
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 23.12.1
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.3.5
     hooks:
-      - id: black
-        language_version: python3 # Should be a command that runs python3.6+
+      # Run the linter.
+      - id: ruff
+        name: ruff lint
+        types_or: [ python, pyi, jupyter ]
+        args: [ --fix ]
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        name: isort (python)
-      - id: isort
-        name: isort (pyi)
-        types: [pyi]
+      # Run the formatter.
+      - id: ruff-format
+        name: ruff format
+        types_or: [ python, pyi, jupyter ]
 
   ###### LINTING ######
   # - repo: https://github.com/PyCQA/bandit
@@ -21,18 +21,6 @@ repos:
   #   hooks:
   #     - id: bandit
   #       args: ["--configfile", ".bandit", "--baseline", "tests/known_issues.json"]
-
-  - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
-    hooks:
-      - id: flake8
-      # any flake8 plugins must be included in the hook venv
-      # additional_dependencies: [flake8-docstrings]
-
-  # - repo: https://github.com/PyCQA/pylint
-  #   rev: v2.8.2
-  #   hooks:
-  #     - id: pylint
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0

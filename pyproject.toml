@@ -1,3 +1,17 @@
-[tool.black]
+[tool.ruff]
 line-length = 100
-target-version = ['py37']
+exclude = [".git", "__pycache__", "old", "build", "dist", "*.egg-info"]
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/rules/
+select = ["F", "T20", "PL", "I"]
+ignore = ["PLR0913", "PLR2004", "PLR0912"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*" = ["F811"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"

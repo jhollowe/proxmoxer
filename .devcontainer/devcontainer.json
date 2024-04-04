@@ -28,6 +28,7 @@
       },
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
+        "charliermarsh.ruff",
         "mhutchie.git-graph",
         "ms-python.python",
         "njpwerner.autodocstring",
