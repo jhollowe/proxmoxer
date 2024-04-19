@@ -13,7 +13,7 @@
   ],
   "[python]": {
     "editor.codeActionsOnSave": {
-      "source.organizeImports": true
+      "source.organizeImports": "explicit"
     }
   },
   "cSpell.words": [
@@ -31,7 +31,9 @@
     "rtype",
     "sess",
     "toolbelt",
+    "UPID",
     "vmid",
+    "vzdump",
     "vztmpl"
   ],
   "autoDocstring.docstringFormat": "sphinx",

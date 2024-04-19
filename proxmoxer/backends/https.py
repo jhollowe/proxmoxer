@@ -16,6 +16,8 @@ from proxmoxer.core import SERVICES, AuthenticationError, config_failure
 
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.WARNING)
+progress_logger = logging.getLogger(__name__ + "_progress")
+progress_logger.setLevel(level=logging.WARNING)
 
 STREAMING_SIZE_THRESHOLD = 10 * 1024 * 1024  # 10 MiB
 SSL_OVERFLOW_THRESHOLD = 2147483135  # 2^31 - 1 - 512
@@ -174,6 +176,7 @@ class ProxmoxHttpSession(requests.Session):
         cert=None,
         serializer=None,
     ):
+        force_streaming = False
         a = auth or self.auth
         c = cookies or self.cookies
 
@@ -193,6 +196,9 @@ class ProxmoxHttpSession(requests.Session):
         data = data or {}
         total_file_size = 0
         for k, v in data.copy().items():
+            if k == "force_streaming_upload":
+                force_streaming = bool(v)
+                del data[k]
             # split qemu exec commands for proper parsing by PVE (issue#89)
             if k == "command":
                 if isinstance(v, list):
@@ -207,16 +213,18 @@ class ProxmoxHttpSession(requests.Session):
                 files[k] = (requests.utils.guess_filename(v), v, "application/octet-stream")
                 del data[k]
 
-        # if there are any large files, send all data and files using streaming multipart encoding
-        if total_file_size > STREAMING_SIZE_THRESHOLD:
+        # if there are any large files, send all data and files using streaming multipart encoding (reduces client memory usage)
+        if total_file_size > STREAMING_SIZE_THRESHOLD or force_streaming:
             try:
                 # pylint:disable=import-outside-toplevel
-                from requests_toolbelt import MultipartEncoder
+                from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
                 encoder = MultipartEncoder(fields={**data, **files})
-                data = encoder
+                monitor = MultipartEncoderMonitor(encoder, get_progress_cb(encoder))
+                data = monitor
                 files = None
                 headers = {"Content-Type": encoder.content_type}
+
             except ImportError:
                 # if the files will cause issues with the SSL 2GiB limit (https://bugs.python.org/issue42853#msg384566)
                 if total_file_size > SSL_OVERFLOW_THRESHOLD:
@@ -228,6 +236,11 @@ class ProxmoxHttpSession(requests.Session):
                     logger.info(
                         "Installing 'requests_toolbelt' will decrease memory used during upload"
                     )
+                    progress_logger.info(
+                        "Multipart upload not possible. No progress will be reported."
+                    )
+        elif total_file_size > 0:
+            progress_logger.info("Multipart upload not used. No progress will be reported.")
 
         return super().request(
             method,
@@ -376,3 +389,14 @@ def get_file_size_partial(file_obj):
     file_obj.seek(starting_cursor)
 
     return size
+
+
+def get_progress_cb(encoder):
+    full_size = encoder.len
+
+    def progress_callback(monitor):
+        sent_size = monitor.bytes_read
+        pct_done = round(100 * sent_size / (1.0 * full_size), 2)
+        progress_logger.debug(f"Upload progress: {sent_size}/{full_size} ({pct_done}%)")
+
+    return progress_callback

@@ -366,7 +366,14 @@ class TestFilesUpload:
                 status = self.f.upload_local_file_to_storage(filename=f_obj.name)
 
             assert status is None
-            assert caplog.record_tuples == [(MODULE_LOGGER_NAME, logging.ERROR, "ERROR MESSAGE")]
+            assert caplog.record_tuples == [
+                (MODULE_LOGGER_NAME, logging.ERROR, "ERROR MESSAGE"),
+                (
+                    MODULE_LOGGER_NAME,
+                    logging.WARN,
+                    "If you consistently hit an error uploading files on low memory systems, install the `requests_toolbelt` library to allow streaming file upload",
+                ),
+            ]
 
 
 @pytest.fixture

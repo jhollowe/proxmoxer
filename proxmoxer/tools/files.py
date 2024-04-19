@@ -46,8 +46,8 @@ class SupportedChecksums(Enum):
     # ordered by preference for longer/stronger checksums first
     SHA512 = ChecksumInfo("sha512", 128)
     SHA256 = ChecksumInfo("sha256", 64)
-    SHA224 = ChecksumInfo("sha224", 56)
     SHA384 = ChecksumInfo("sha384", 96)
+    SHA224 = ChecksumInfo("sha224", 56)
     MD5 = ChecksumInfo("md5", 32)
     SHA1 = ChecksumInfo("sha1", 40)
 
@@ -71,6 +71,7 @@ class Files:
         filename: str,
         do_checksum_check: bool = True,
         blocking_status: bool = True,
+        force_streaming: bool = True,
     ):
         file_path = Path(filename)
 
@@ -110,15 +111,21 @@ class Files:
                         # reset to the start of the file so the upload can use the same file handle
                         f_obj.seek(0)
 
-                params = {
+                data = {
                     "content": "iso" if file_path.absolute().name.endswith("iso") else "vztmpl",
                     "checksum-algorithm": checksum_type,
                     "checksum": checksum,
                     "filename": f_obj,
                 }
-                upid = self._prox.nodes(self._node).storage(self._storage).upload.post(**params)
+                if force_streaming:
+                    # going through the requests_toolbelt provides progress hooks and streaming upload
+                    data["force_streaming_upload"] = True
+                upid = self._prox.nodes(self._node).storage(self._storage).upload.post(**data)
         except OSError as e:
             logger.error(e)
+            logger.warn(
+                "If you consistently hit an error uploading files on low memory systems, install the `requests_toolbelt` library to allow streaming file upload"
+            )
             return None
 
         if blocking_status:
