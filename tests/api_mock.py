@@ -8,7 +8,7 @@ from urllib.parse import parse_qsl, urlparse
 
 import pytest
 import responses
-from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
+from requests_toolbelt import MultipartEncoderMonitor
 
 
 @pytest.fixture()
@@ -125,7 +125,7 @@ class PVERegistry(responses.registries.FirstMatchRegistry):
     def _cb_echo(self, request):
         body = request.body
         if body is not None:
-            if isinstance(body, MultipartEncoder) or isinstance(body, MultipartEncoderMonitor):
+            if isinstance(body, MultipartEncoderMonitor):
                 body = body.to_string()  # really, to byte string
             body = body if isinstance(body, str) else str(body, "utf-8")
 
@@ -137,6 +137,8 @@ class PVERegistry(responses.registries.FirstMatchRegistry):
             "body": body,
             # "body_json": dict(parse_qsl(request.body)),
         }
+        if isinstance(request.body, MultipartEncoderMonitor):
+            resp["is_toolbelt"] = True
         return (200, self.common_headers, json.dumps(resp))
 
     def _cb_password_auth(self, request):

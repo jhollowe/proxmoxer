@@ -22,6 +22,7 @@ from .api_mock import (  # pylint: disable=unused-import # noqa: F401
 # pylint: disable=no-self-use
 
 MODULE_LOGGER_NAME = "proxmoxer.backends.https"
+MODULE_PROGRESS_LOGGER_NAME = "proxmoxer.backends.https_progress"
 
 
 class TestHttpsBackend:
@@ -313,7 +314,9 @@ class TestProxmoxHttpSession:
         assert content["body"] == "command=echo&command=hello&command=world"
         assert content["headers"]["Content-Type"] == "application/x-www-form-urlencoded"
 
-    def test_request_file(self, mock_pve):
+    def test_request_file(self, caplog, toolbelt_on_off, mock_pve):
+        caplog.set_level(logging.DEBUG, logger=MODULE_PROGRESS_LOGGER_NAME)
+
         size = 10
         content = {}
         with tempfile.TemporaryFile("w+b") as f_obj:
@@ -328,11 +331,20 @@ class TestProxmoxHttpSession:
 
         assert content["method"] == "GET"
         assert content["url"] == self.base_url + "/fake/echo"
+        assert "is_toolbelt" not in content  # toolbelt is never used (under streaming threshold)
         assert m is not None  # content matches multipart for the created file
         assert content["headers"]["Content-Type"] == "multipart/form-data; boundary=" + m[1]
+        assert caplog.record_tuples == [
+            (
+                MODULE_PROGRESS_LOGGER_NAME,
+                logging.INFO,
+                "Multipart upload not used. No progress will be reported.",
+            )
+        ]
 
     def test_request_streaming(self, toolbelt_on_off, caplog, mock_pve):
         caplog.set_level(logging.INFO, logger=MODULE_LOGGER_NAME)
+        caplog.set_level(logging.DEBUG, logger=MODULE_PROGRESS_LOGGER_NAME)
 
         size = https.STREAMING_SIZE_THRESHOLD + 1
         content = {}
@@ -352,12 +364,100 @@ class TestProxmoxHttpSession:
         assert content["headers"]["Content-Type"] == "multipart/form-data; boundary=" + m[1]
 
         if not toolbelt_on_off:
+            assert "is_toolbelt" not in content
             assert caplog.record_tuples == [
                 (
                     MODULE_LOGGER_NAME,
                     logging.INFO,
                     "Installing 'requests_toolbelt' will decrease memory used during upload",
-                )
+                ),
+                (
+                    MODULE_PROGRESS_LOGGER_NAME,
+                    logging.INFO,
+                    "Multipart upload not possible. No progress will be reported.",
+                ),
+            ]
+        else:
+            assert "is_toolbelt" in content
+
+    def test_request_streaming_forced(self, toolbelt_on_off, caplog, mock_pve):
+        caplog.set_level(logging.INFO, logger=MODULE_LOGGER_NAME)
+        caplog.set_level(logging.DEBUG, logger=MODULE_PROGRESS_LOGGER_NAME)
+
+        size = https.STREAMING_SIZE_THRESHOLD - 1
+        content = {}
+        with tempfile.TemporaryFile("w+b") as f_obj:
+            f_obj.write(b"a" * size)
+            f_obj.seek(0)
+            resp = self._session.request(
+                "GET",
+                self.base_url + "/fake/echo",
+                data={"iso": f_obj, "force_streaming_upload": True},
+            )
+            content = resp.json()
+
+        # decode multipart file
+        body_regex = f'--([0-9a-f]*)\r\nContent-Disposition: form-data; name="iso"\r\nContent-Type: application/octet-stream\r\n\r\na{{{size}}}\r\n--\\1--\r\n'
+        m = re.match(body_regex, content["body"])
+
+        assert content["method"] == "GET"
+        assert content["url"] == self.base_url + "/fake/echo"
+        assert "is_toolbelt" in content  # toolbelt MUST be used
+        assert m is not None  # content matches multipart for the created file
+        assert content["headers"]["Content-Type"] == "multipart/form-data; boundary=" + m[1]
+
+        if not toolbelt_on_off:
+            assert caplog.record_tuples == [
+                (
+                    MODULE_LOGGER_NAME,
+                    logging.INFO,
+                    "Installing 'requests_toolbelt' will decrease memory used during upload",
+                ),
+                (
+                    MODULE_PROGRESS_LOGGER_NAME,
+                    logging.INFO,
+                    "Multipart upload not possible. No progress will be reported.",
+                ),
+            ]
+
+    def test_request_streaming_unforced(self, toolbelt_on_off, caplog, shrink_thresholds, mock_pve):
+        caplog.set_level(logging.INFO, logger=MODULE_LOGGER_NAME)
+        caplog.set_level(logging.DEBUG, logger=MODULE_PROGRESS_LOGGER_NAME)
+
+        size = https.STREAMING_SIZE_THRESHOLD - 1
+        content = {}
+        with tempfile.TemporaryFile("w+b") as f_obj:
+            f_obj.write(b"a" * size)
+            f_obj.seek(0)
+            resp = self._session.request(
+                "GET",
+                self.base_url + "/fake/echo",
+                data={"iso": f_obj, "force_streaming_upload": False},
+            )
+            content = resp.json()
+
+        # decode multipart file
+        body_regex = f'--([0-9a-f]*)\r\nContent-Disposition: form-data; name="iso"\r\nContent-Type: application/octet-stream\r\n\r\na{{{size}}}\r\n--\\1--\r\n'
+        m = re.match(body_regex, content["body"])
+
+        assert content["method"] == "GET"
+        assert content["url"] == self.base_url + "/fake/echo"
+        assert "is_toolbelt" not in content  # toolbelt must NOT be used
+        assert m is not None  # content matches multipart for the created file
+        assert content["headers"]["Content-Type"] == "multipart/form-data; boundary=" + m[1]
+
+        if not toolbelt_on_off:
+            assert caplog.record_tuples == [
+                (
+                    MODULE_LOGGER_NAME,
+                    logging.INFO,
+                    "Installing 'requests_toolbelt' will decrease memory used during upload",
+                ),
+                (
+                    MODULE_PROGRESS_LOGGER_NAME,
+                    logging.INFO,
+                    "Multipart upload not possible. No progress will be reported.",
+                ),
             ]
 
     def test_request_large_file(self, shrink_thresholds, toolbelt_on_off, caplog, mock_pve):
