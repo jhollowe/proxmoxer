@@ -353,5 +353,4 @@ class PVERegistry(responses.registries.FirstMatchRegistry):
                 "body": body,
                 # "body_json": dict(parse_qsl(request.body)),
             }
-            print(resp)
             return (200, self.common_headers, json.dumps(resp))

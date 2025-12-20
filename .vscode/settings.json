@@ -1,16 +1,5 @@
 {
-  "python.linting.enabled": true,
-  "python.formatting.provider": "black",
   "editor.formatOnPaste": false,
-  "python.linting.flake8Enabled": true,
-  "python.linting.pylintEnabled": true,
-  "python.linting.banditEnabled": true,
-  "python.linting.banditArgs": [
-    "--baseline",
-    "tests/known_issues.json",
-    "--configfile",
-    ".bandit"
-  ],
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
@@ -47,4 +36,5 @@
   "coverage-gutters.coverageFileNames": [
     "coverage.xml"
   ],
+  "python.analysis.typeCheckingMode": "strict",
 }

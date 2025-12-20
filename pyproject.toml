@@ -4,11 +4,22 @@ exclude = [".git", "__pycache__", "old", "build", "dist", "*.egg-info"]
 
 [tool.ruff.lint]
 # https://docs.astral.sh/ruff/rules/
-select = ["F", "T20", "PL", "I"]
-ignore = ["PLR0913", "PLR2004", "PLR0912"]
+select = [
+  "F",
+  "T20",
+  "PL",
+  "I",
+]
+ignore = [
+  "PLR0912", # don't limit code branches
+  "PLR0913", # don't limit the number of function arguments
+  "PLR2004", # allow magic values
+]
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/*" = ["F811"]
+"tests/*" = [
+  "F811" # allow "unused" fixtures in tests (fixtures that only provide side effects)
+]
 
 [tool.ruff.format]
 quote-style = "double"
