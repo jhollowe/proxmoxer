@@ -1,28 +1,88 @@
 [tool.ruff]
 line-length = 100
+indent-width = 4
+target-version = "py311"
 exclude = [".git", "__pycache__", "old", "build", "dist", "*.egg-info"]
+# enable preview/beta rules
+preview = true
+
+[tool.ruff.format]
+# control with inline "# fmt: on", "# fmt: off", or "# fmt: skip"
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+skip-magic-trailing-comma = false # a comma at the end of the last element means don't collapse
+docstring-code-line-length = "dynamic"
 
 [tool.ruff.lint]
-# https://docs.astral.sh/ruff/rules/
+# rules or rulesets to enable https://docs.astral.sh/ruff/rules/
+# control with "# noqa <rule_id>" to disable a rule
+# default: ["E4", "E7", "E9", "F"]
 select = [
-  "F",
-  "T20",
-  "PL",
-  "I",
+    ##### code style #####
+    "ARG", # unused arguments
+    "E4", # imports errors
+    "F4", # check imports for common issues
+    "F5", # string formatting (FLY should convert % and .format() to f-strings)
+    "F6", # syntax
+    "F7", # operator scope
+    "F8", # unused/undefined values
+    "F9", # exceptions
+    "I", # imports
+    "ISC", # don't have implicit string concat, just combine strings
+    "N", # enforce PEP-8 naming conventions
+    "PT", # pytest common style issues
+    # "Q", # enforce double quotes
+    "W", # indentation and whitespace warnings
+
+    ##### type hinting #####
+    "TC", # wraps imports only needed for types in if block
+
+    ##### good coding practices and common errors #####
+    "A", # don't shadow builtin names
+    "ASYNC", # good async practices
+    "B", # common "bugbears" (errors)
+    "C4", # generator/list comprehension
+    "DTZ", # enforce timezone aware datetime
+    "E9", # ruff can't read the file to lint/format
+    "FURB", # do things the "right" way
+    "INP", # ensure dirs have __init__.py
+    "LOG", # use the logging module properly
+    "PGH", # type and linter pragmas must specify specific rules to ignore
+    "RET", # properly use return statements
+    "RUF", # ruff unique rules
+    "SLF", # prevent access to private members
+    "T20", # enforce using logger instead of print()
+    "TID252", # disallow relative imports
+
+    ##### Improve and modernize code #####
+    # "C90", # limit the complexity/call-stack of the program
+    "FLY", # enforce using f-strings
+    "PERF", # performance improvements
+    "PTH", # use Path lib instead of os.path
+    "SIM", # simplify code
+    "UP", # upgrade old python ways of doing things to the {target-version} way
+    "S", # security (processes, libraries, network connections, etc.) issues
+
+    ##### documentation #####
+    # "D", # require documentation
+    # "DOC", # require documenting returns, yields, and exceptions
+
+    ##### Formatting #####
+    "E1", # indentation errors
+    "E2", # whitespace errors
+    "E3", # blank line errors
+    "E7", # redundant syntax/conditionals
 ]
 ignore = [
-  "PLR0912", # don't limit code branches
-  "PLR0913", # don't limit the number of function arguments
-  "PLR2004", # allow magic values
+    # "PIE790", # unnecessary use of `pass` in empty class/method
+    "D203", # we want 0 lines before docstring
+    "D204", # we want 0 lines after docstring
+    "D212", # docstring summary on line after the `"""`
+    "D104", # we don't need to document the package, docs for each class/method is enough
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
   "F811" # allow "unused" fixtures in tests (fixtures that only provide side effects)
 ]
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-docstring-code-format = true
-docstring-code-line-length = "dynamic"
