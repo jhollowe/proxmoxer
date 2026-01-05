@@ -2,7 +2,7 @@ repos:
   ###### FORMATTING ######
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.3.5
+    rev: v0.11.2
     hooks:
       # Run the linter.
       - id: ruff
@@ -18,13 +18,14 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-      - id: check-case-conflict
-      - id: check-symlinks
-      - id: destroyed-symlinks
-      - id: check-merge-conflict
-      - id: check-docstring-first
-      - id: mixed-line-ending
-        args: [--fix=no]
+      - id: check-case-conflict # make sure there are no files which would be clobbered on Windows
+      - id: check-symlinks # make sure symlink destination exists
+      - id: destroyed-symlinks # make sure Windows didn't break symlinks
+      - id: check-merge-conflict # look for common merge conflict markers/strings
+      - id: check-illegal-windows-names # make sure no files have names that would break on Windows
+      - id: check-docstring-first # make sure the docstring is the first thing in the class/method
+      - id: mixed-line-ending # make sure all the line endings are /n or /r/n
+        args: [--fix=lf]
 
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
@@ -32,3 +33,6 @@ repos:
       - id: rst-backticks
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
+      - id: python-check-blanket-noqa # ensure format/lint ignore pragmas have a specific rule to ignore
+      - id: python-check-blanket-type-ignore # ensure type ignore pragmas have a specific rule to ignore
+      - id: python-check-mock-methods # check for common errors in mock methods
