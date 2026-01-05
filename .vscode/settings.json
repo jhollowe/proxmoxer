@@ -1,40 +1,71 @@
 {
-  "editor.formatOnPaste": false,
-  "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit"
-    }
-  },
-  "cSpell.words": [
-    "auths",
-    "Butovich",
-    "caplog",
-    "cpus",
-    "Oleg",
-    "onboot",
-    "ostemplate",
-    "Paramiko",
-    "proxmoxer",
-    "pvesh",
-    "resps",
-    "rtype",
-    "sess",
-    "toolbelt",
-    "vmid",
-    "vztmpl"
-  ],
-  "autoDocstring.docstringFormat": "sphinx",
-  "autoDocstring.startOnNewLine": true,
-  "python.testing.pytestArgs": [
-    "--cov",
-    "--cov-report",
-    "xml:coverage.xml",
-    "tests/",
-  ],
-  "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true,
-  "coverage-gutters.coverageFileNames": [
-    "coverage.xml"
-  ],
-  "python.analysis.typeCheckingMode": "strict",
+    // ruff formatter/linter
+    "ruff.enable": true,
+    "ruff.lint.enable": true,
+    "ruff.organizeImports": true,
+    "ruff.format.preview": true,
+    "ruff.lint.preview": true,
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    //documentation
+    "autoDocstring.docstringFormat": "sphinx",
+    "autoDocstring.quoteStyle": "\"\"\"",
+    "autoDocstring.startOnNewLine": true,
+    //python language server
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.completeFunctionParens": true,
+    "python.analysis.gotoDefinitionInStringLiteral": true,
+    "python.analysis.importFormat": "absolute",
+    "python.analysis.diagnosticSeverityOverrides": {
+        // ruff will already warn on this
+        "reportUnusedImport": "none"
+    },
+    //testing
+    "python.testing.pytestEnabled": true,
+    // "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "python.analysis.enablePytestSupport": true,
+    "python.testing.pytestArgs": [
+        "-rA",
+        "--cov-report xml:coverage.xml",
+    ],
+    "testing.showCoverageInExplorer": true,
+    //general python
+    "python.missingPackage.severity": "Warning",
+    "debugpy.showPythonInlineValues": true,
+    // types
+    "python.analysis.typeCheckingMode": "strict",
+    "python.analysis.generateWithTypeAnnotation": true,
+    "python.analysis.typeEvaluation.deprecateTypingAliases": true,
+    "python.analysis.typeEvaluation.enableReachabilityAnalysis": true,
+    "python.analysis.typeEvaluation.enableTypeIgnoreComments": true,
+    "python.analysis.typeEvaluation.strictDictionaryInference": true,
+    "python.analysis.exclude": [
+        ".pytest_cache"
+    ],
+    "cSpell.words": [
+        "auths",
+        "Butovich",
+        "caplog",
+        "cpus",
+        "Oleg",
+        "onboot",
+        "ostemplate",
+        "Paramiko",
+        "proxmoxer",
+        "pvesh",
+        "resps",
+        "rtype",
+        "sess",
+        "toolbelt",
+        "vmid",
+        "vztmpl"
+    ],
+    "coverage-gutters.coverageFileNames": [
+        "coverage.xml"
+    ],
 }
